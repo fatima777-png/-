@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدخال بيانات الحجز</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; }
+        .container { max-width: 400px; margin: auto; padding: 20px; border-radius: 8px; background: #f4f4f4; }
+        .form-group { margin-bottom: 15px; text-align: right; }
+        label { display: block; font-weight: bold; }
+        input, select { width: 100%; padding: 8px; margin-top: 5px; }
+        button { margin-top: 10px; padding: 10px 15px; border: none; background: #28a745; color: white; cursor: pointer; }
+        button:hover { background: #218838; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>إدخال بيانات الحجز</h2>
+        <form id="bookingForm">
+            <div class="form-group">
+                <label for="name">الاسم الكامل:</label>
+                <input type="text" id="name" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">رقم التواصل:</label>
+                <input type="tel" id="phone" required>
+            </div>
+            <div class="form-group">
+                <label for="email">البريد الإلكتروني:</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label for="purpose">الغرض من الحجز:</label>
+                <select id="purpose">
+                    <option value="جولة في المكتبة">جولة في المكتبة</option>
+                    <option value="مساعدة في البحث">مساعدة في البحث</option>
+                    <option value="حجز قاعة دراسة">حجز قاعة دراسة</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="time">الوقت:</label>
+                <select id="time">
+                    <option value="08:00">08:00</option>
+                    <option value="09:00">09:00</option>
+                    <option value="10:00">10:00</option>
+                    <option value="11:00">11:00</option>
+                    <option value="12:00">12:00</option>
+                    <option value="13:00">13:00</option>
+                    <option value="14:00">14:00</option>
+                    <option value="15:00">15:00</option>
+                </select>
+            </div>
+            <input type="hidden" id="selectedDate">
+            <button type="button" onclick="submitBooking()">تأكيد الحجز</button>
+        </form>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const selectedDate = urlParams.get('date');
+        document.getElementById('selectedDate').value = selectedDate;
+
+        function submitBooking() {
+            let name = document.getElementById('name').value;
+            let phone = document.getElementById('phone').value;
+            let email = document.getElementById('email').value;
+            let purpose = document.getElementById('purpose').value;
+            let time = document.getElementById('time').value;
+            let date = document.getElementById('selectedDate').value;
+
+            fetch('http://localhost:3000/api/book', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, phone, email, purpose, date, time })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                window.location.href = 'index.html';
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+
+</body>
+</html>
